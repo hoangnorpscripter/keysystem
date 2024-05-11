@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Key Update</title>
+</head>
+
+<body>
+    <p id="keyDisplay"><span id="keyValue"></span></p>
+    <script>
+        // Function to generate a random key
+        function generateRandomKey() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const length = 10;
+            let key = '';
+            for (let i = 0; i < length; i++) {
+                key += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return key;
+        }
+
+        // Function to update the key display
+        function updateKeyDisplay(key) {
+            document.getElementById('keyValue').textContent = key;
+        }
+
+        // Function to generate and update a new key
+        function generateKey() {
+            const newKey = generateRandomKey();
+            updateKeyDisplay(newKey);
+        }
+
+        // Function to check if it's a new day
+        function isNewDay(previousDate) {
+            const currentDate = new Date();
+            const previousDay = new Date(previousDate);
+            return (currentDate.toDateString() !== previousDay.toDateString());
+        }
+
+        // Function to retrieve the previously stored key
+        function getStoredKey() {
+            return localStorage.getItem('dailyKey');
+        }
+
+        // Function to store the key and update if it's a new day
+        function updateDailyKey() {
+            let storedKey = getStoredKey();
+            if (!storedKey || isNewDay(storedKey.date)) {
+                const newKey = generateRandomKey();
+                localStorage.setItem('dailyKey', JSON.stringify({ key: newKey, date: new Date() }));
+                storedKey = { key: newKey, date: new Date() };
+            }
+            return storedKey.key;
+        }
+
+        // Function to update the daily key when requested by the user
+        function updateKeyManually() {
+            const dailyKey = updateDailyKey();
+            updateKeyDisplay(dailyKey);
+        }
+
+        // Initial key generation when the page loads
+        updateKeyManually();
+    </script>
+</body>
+
+</html>
